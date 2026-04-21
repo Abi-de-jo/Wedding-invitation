@@ -3,8 +3,8 @@ import "./globals.css";
 import IPhoneNotch from "./components/IPhoneNotch";
 import { weddingData } from "./data/wedding";
 
-const siteUrl = "https://yourdomain.com";
-const previewImage = `${siteUrl}/preview.jpg`;
+const siteUrl = "https://venkatesh-wedding-invitation.vercel.app";
+const previewImage = `${siteUrl}/preview.png`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
