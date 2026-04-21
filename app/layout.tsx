@@ -30,14 +30,7 @@ export const metadata: Metadata = {
     description: `Join us in celebrating the wedding of ${weddingData.groom} & ${weddingData.bride}.`,
     url: siteUrl,
     siteName: "Wedding Invitation",
-    images: [
-      {
-        url: previewImage,
-        width: 1200,
-        height: 630,
-        alt: `${weddingData.groom} & ${weddingData.bride} Wedding Invitation`,
-      },
-    ],
+images: ["/preview.png"],
     locale: "en_US",
     type: "website",
   },
