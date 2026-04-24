@@ -17,15 +17,13 @@ function ScratchCircle({ text, onDone }: ScratchCircleProps) {
   const size = 300;
   const brush = 38;
 
-  // Draw golden coin with rich metallic texture
-  const drawCoin = useCallback((ctx: CanvasRenderingContext2D) => {
+   const drawCoin = useCallback((ctx: CanvasRenderingContext2D) => {
     ctx.clearRect(0, 0, size, size);
     const cx = size / 2;
     const cy = size / 2;
     const r = size / 2;
 
-    // Base gold gradient
-    const base = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+     const base = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
     base.addColorStop(0, "#ffef73");
     base.addColorStop(0.2, "#ffe787");
     base.addColorStop(0.45, "#ffd968");
@@ -54,8 +52,7 @@ function ScratchCircle({ text, onDone }: ScratchCircleProps) {
       ctx.stroke();
     }
 
-    // Concentric grooves
-    for (let i = 1; i <= 14; i++) {
+     for (let i = 1; i <= 14; i++) {
       const radius = (r / 14) * i;
       const alpha = 0.08 + (i / 14) * 0.1;
       ctx.strokeStyle = `rgba(100, 65, 10, ${alpha})`;
@@ -66,8 +63,7 @@ function ScratchCircle({ text, onDone }: ScratchCircleProps) {
     }
     ctx.restore();
 
-    // Highlight shine (top-left)
-    const shine = ctx.createRadialGradient(cx * 0.6, cy * 0.45, 0, cx * 0.6, cy * 0.45, r * 0.6);
+     const shine = ctx.createRadialGradient(cx * 0.6, cy * 0.45, 0, cx * 0.6, cy * 0.45, r * 0.6);
     shine.addColorStop(0, "rgba(255, 250, 210, 0.6)");
     shine.addColorStop(0.5, "rgba(255, 240, 150, 0.15)");
     shine.addColorStop(1, "rgba(255, 255, 255, 0)");
@@ -80,8 +76,7 @@ function ScratchCircle({ text, onDone }: ScratchCircleProps) {
     ctx.fillRect(0, 0, size, size);
     ctx.restore();
 
-    // Outer rim depth
-    ctx.beginPath();
+     ctx.beginPath();
     ctx.arc(cx, cy, r - 1.5, 0, Math.PI * 2);
     const rim = ctx.createLinearGradient(0, 0, size, size);
     rim.addColorStop(0, "rgb(232, 225, 225)");
@@ -91,12 +86,10 @@ function ScratchCircle({ text, onDone }: ScratchCircleProps) {
     ctx.lineWidth = 5;
     ctx.stroke();
 
-    // Setup for scratching
-    ctx.globalCompositeOperation = "destination-out";
+     ctx.globalCompositeOperation = "destination-out";
   }, [size]);
 
-  // Optimized progress check
-  const checkProgress = useCallback(() => {
+   const checkProgress = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas || doneRef.current) return;
 
@@ -105,7 +98,7 @@ function ScratchCircle({ text, onDone }: ScratchCircleProps) {
 
     const data = ctx.getImageData(0, 0, size, size).data;
     let cleared = 0;
-    const step = 12; // Sample every 12th pixel for performance
+    const step = 12;  
 
     for (let i = 3; i < data.length; i += step * 4) {
       if (data[i] === 0) cleared++;

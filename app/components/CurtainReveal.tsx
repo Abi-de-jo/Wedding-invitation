@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+import Hls from "hls.js";
 
 export default function PremiereCurtain({
   children,
@@ -18,16 +19,40 @@ export default function PremiereCurtain({
   useEffect(() => {
     document.body.style.overflow = phase === "open" ? "auto" : "hidden";
 
-    if (typeof window !== "undefined") {
-      const audio = new Audio("/music.mp3");
-      audio.loop = true;
-      audio.volume = 0.5;
-      audioRef.current = audio;
-    }
+    const audio = new Audio("/music.mp3");
+    audio.loop = true;
+    audio.volume = 0.5;
+    audioRef.current = audio;
 
     return () => {
       document.body.style.overflow = "auto";
       audioRef.current?.pause();
+    };
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase !== "playing") return;
+
+    const video = videoRef.current;
+    if (!video) return;
+
+    let hls: Hls | null = null;
+
+    if (Hls.isSupported()) {
+      hls = new Hls();
+      hls.loadSource("/videos/index.m3u8");
+      hls.attachMedia(video);
+
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        video.play().catch(() => {});
+      });
+    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+      video.src = "/videos/index.m3u8";
+      video.play().catch(() => {});
+    }
+
+    return () => {
+      hls?.destroy();
     };
   }, [phase]);
 
@@ -38,25 +63,27 @@ export default function PremiereCurtain({
 
     try {
       await audioRef.current?.play();
-    } catch (error) {
-      console.log(error);
-    }
+    } catch {}
 
-    if (videoRef.current) {
-      videoRef.current.currentTime = 0;
-
-      try {
-        await videoRef.current.play();
-      } catch (error) {
-        console.log(error);
-      }
+    const video = videoRef.current;
+    if (video) {
+      video.currentTime = 0;
+      video.play().catch(() => {});
     }
   };
 
-  const handleVideoEnd = () => {
+const handleVideoEnd = () => {
+  const video = videoRef.current;
+
+  if (video) {
+    video.pause();
+  }
+
+  setTimeout(() => {
     setPhase("open");
     onComplete?.();
-  };
+  }, 180);
+};
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-[#f8f6f1]">
@@ -105,11 +132,9 @@ export default function PremiereCurtain({
           muted
           playsInline
           autoPlay
-          onEnded={handleVideoEnd}
-          className="absolute inset-0 z-30 h-full w-full object-cover"
-        >
-          <source src="/curtains.mp4" type="video/mp4" />
-        </video>
+           onEnded={handleVideoEnd}
+          className="absolute inset-0 z-50 h-full w-full object-cover"
+        />
       )}
 
       {phase === "idle" && (
@@ -131,7 +156,7 @@ export default function PremiereCurtain({
             />
           </motion.button>
 
-          <p className="absolute top-[60%] left-1/2 z-40 -translate-x-1/2 text-sm tracking-[0.25em] uppercase text-white">
+          <p className="absolute top-[60%] left-1/2 z-40 -translate-x-1/2 text-sm tracking-[0.25em] uppercase text-center text-white">
             Click to Reveal
           </p>
         </>
